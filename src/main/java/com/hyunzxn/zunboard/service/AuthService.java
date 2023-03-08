@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.hyunzxn.zunboard.domain.User;
+import com.hyunzxn.zunboard.exception.AlreadyExistAccountException;
 import com.hyunzxn.zunboard.repository.UserRepository;
 import com.hyunzxn.zunboard.request.SignupRequest;
 
@@ -25,7 +26,7 @@ public class AuthService {
 		Optional<User> findUser = userRepository.findByAccount(request.getAccount());
 
 		if (findUser.isPresent()) {
-			throw new RuntimeException("중복된 아이디로 가입한 사용자가 있습니다."); //TODO Custom Exception으로 변경
+			throw new AlreadyExistAccountException();
 		} else {
 			User savedUser = userRepository.save(user);
 			return savedUser.getId();
