@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.hyunzxn.zunboard.crypto.PasswordEncoder;
 import com.hyunzxn.zunboard.domain.User;
 import com.hyunzxn.zunboard.exception.AlreadyExistAccountException;
 import com.hyunzxn.zunboard.exception.InvalidLoginRequestException;
@@ -29,6 +30,7 @@ import lombok.RequiredArgsConstructor;
 public class AuthService {
 
 	private final UserRepository userRepository;
+	private final PasswordEncoder passwordEncoder;
 
 	@Value("${jwt.secret.key}")
 	private String salt;
@@ -36,21 +38,32 @@ public class AuthService {
 	@Transactional
 	public Long signup(SignupRequest request) {
 
-		User user = User.of(request.getUsername(), request.getAccount(), request.getPassword());
 		Optional<User> findUser = userRepository.findByAccount(request.getAccount());
 
 		if (findUser.isPresent()) {
 			throw new AlreadyExistAccountException();
-		} else {
-			User savedUser = userRepository.save(user);
-			return savedUser.getId();
 		}
+
+		User user = User.builder()
+			.username(request.getUsername())
+			.account(request.getAccount())
+			.password(passwordEncoder.encrypt(request.getPassword()))
+			.build();
+		User savedUser = userRepository.save(user);
+
+		return savedUser.getId();
+
 	}
 
 	public LoginResponse login(LoginRequest request) {
 
-		User findUser = userRepository.findByAccountAndPassword(request.getAccount(), request.getPassword())
+		User findUser = userRepository.findByAccount(request.getAccount())
 			.orElseThrow(InvalidLoginRequestException::new);
+
+		boolean isMatched = passwordEncoder.matches(request.getPassword(), findUser.getPassword());
+		if (!isMatched) {
+			throw new InvalidLoginRequestException();
+		}
 
 		String token = createToken(request.getAccount());
 

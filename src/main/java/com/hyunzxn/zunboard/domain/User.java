@@ -35,12 +35,4 @@ public class User extends BaseEntity {
 		this.account = account;
 		this.password = password;
 	}
-
-	public static User of(String username, String account, String password) {
-		return User.builder()
-			.username(username)
-			.account(account)
-			.password(password)
-			.build();
-	}
 }
