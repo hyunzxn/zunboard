@@ -1,14 +1,14 @@
 package com.hyunzxn.zunboard.service;
 
-import java.nio.charset.StandardCharsets;
-import java.security.Key;
 import java.util.Date;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Value;
+import javax.crypto.SecretKey;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.hyunzxn.zunboard.config.JwtConfig;
 import com.hyunzxn.zunboard.crypto.PasswordEncoder;
 import com.hyunzxn.zunboard.domain.User;
 import com.hyunzxn.zunboard.exception.AlreadyExistAccountException;
@@ -20,7 +20,6 @@ import com.hyunzxn.zunboard.response.LoginResponse;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 
@@ -31,9 +30,7 @@ public class AuthService {
 
 	private final UserRepository userRepository;
 	private final PasswordEncoder passwordEncoder;
-
-	@Value("${jwt.secret.key}")
-	private String salt;
+	private final JwtConfig jwtConfig;
 
 	@Transactional
 	public Long signup(SignupRequest request) {
@@ -75,13 +72,14 @@ public class AuthService {
 
 	private String createToken(String account) {
 
-		Key secretKey = Keys.hmacShaKeyFor(salt.getBytes(StandardCharsets.UTF_8));
+		SecretKey key = Keys.hmacShaKeyFor(jwtConfig.getKey());
+
 		Claims claims = Jwts.claims().setSubject(account);
-		Date now = new Date();
+
 		return Jwts.builder()
 			.setClaims(claims)
-			.setIssuedAt(now)
-			.signWith(secretKey, SignatureAlgorithm.HS256)
+			.signWith(key)
+			.setIssuedAt(new Date())
 			.compact();
 	}
 }
