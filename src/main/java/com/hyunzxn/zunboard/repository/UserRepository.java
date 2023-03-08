@@ -9,4 +9,5 @@ import com.hyunzxn.zunboard.domain.User;
 public interface UserRepository extends JpaRepository<User, Long> {
 
 	Optional<User> findByAccount(String account);
+	Optional<User> findByAccountAndPassword(String account, String password);
 }
