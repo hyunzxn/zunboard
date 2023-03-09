@@ -1,8 +1,0 @@
-POST http://localhost:8080/auth/signup
-Content-Type: application/json
-
-{
-  "username": "현준",
-  "account": "hyunzxn",
-  "password": "1234"
-}
