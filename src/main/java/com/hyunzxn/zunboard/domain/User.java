@@ -42,17 +42,4 @@ public class User extends BaseEntity {
 		this.account = account;
 		this.password = password;
 	}
-
-	@Builder
-	public User(String username, String account, String password, List<Post> posts) {
-		this.username = username;
-		this.account = account;
-		this.password = password;
-		this.posts = posts;
-	}
-
-	public void addPost(Post post) {
-		posts.add(post);
-		post.setUser(this);
-	}
 }

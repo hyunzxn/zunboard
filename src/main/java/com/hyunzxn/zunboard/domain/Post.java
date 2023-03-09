@@ -40,14 +40,17 @@ public class Post extends BaseEntity {
 		this.content = content;
 	}
 
-	@Builder
-	public Post(String content, User user) {
-		this.content = content;
-		this.user = user;
+	public static Post createPost(String content, User user) {
+		Post post = Post.builder()
+			.content(content)
+			.build();
+		post.setUser(user);
+		return post;
 	}
 
 	public void setUser(User user) {
 		this.user = user;
+		user.getPosts().add(this);
 	}
 
 }
