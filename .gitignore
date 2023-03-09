@@ -37,5 +37,3 @@ src/main/resources/application.yml
 ### VS Code ###
 .vscode/
 
-### http
-http/
