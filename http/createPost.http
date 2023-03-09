@@ -1,7 +1,7 @@
 POST http://localhost:8080/posts
 Content-Type: application/json
-Authorization: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJoeXVuenhuIiwiaWF0IjoxNjc4MzQzOTQzfQ.gIOQ-MdQVGni45_nAdFt8i772LejzuSxkPaSoKbWlNM
+Authorization: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJqYW5lIiwiaWF0IjoxNjc4MzUwNzA4fQ.WMPMokCTmGbWDlfKe2LW1Q7xDin-gfYu1WDmu1KHRkE
 
 {
-  "content": "테스트입니다."
+  "content": "테스트입니다333."
 }

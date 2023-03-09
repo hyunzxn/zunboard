@@ -1,5 +1,8 @@
 package com.hyunzxn.zunboard.service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -9,6 +12,7 @@ import com.hyunzxn.zunboard.exception.UnAuthorizedException;
 import com.hyunzxn.zunboard.repository.PostRepository;
 import com.hyunzxn.zunboard.repository.UserRepository;
 import com.hyunzxn.zunboard.request.PostCreateRequest;
+import com.hyunzxn.zunboard.response.PostResponse;
 
 import lombok.RequiredArgsConstructor;
 
@@ -31,5 +35,12 @@ public class PostService {
 		Post savedPost = postRepository.save(post);
 
 		return savedPost.getId();
+	}
+
+	public List<PostResponse> getAllPosts() {
+		List<Post> posts = postRepository.findAll();
+		return posts.stream()
+			.map(PostResponse::changeToDto)
+			.collect(Collectors.toList());
 	}
 }
