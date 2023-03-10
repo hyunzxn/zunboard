@@ -1,5 +1,7 @@
 package com.hyunzxn.zunboard.service;
 
+import java.util.Optional;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -57,5 +59,16 @@ public class PostService {
 
 		post.update(request);
 		return post.getId();
+	}
+
+	@Transactional
+	public void deletePost(Long postId) {
+
+		Optional<Post> findPost = postRepository.findById(postId);
+		if (findPost.isEmpty()) {
+			throw new NotFoundException();
+		}
+		postRepository.deleteById(postId);
+
 	}
 }

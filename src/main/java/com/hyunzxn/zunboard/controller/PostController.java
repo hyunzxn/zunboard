@@ -5,6 +5,7 @@ import static org.springframework.http.HttpStatus.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -59,5 +60,11 @@ public class PostController {
 	public ResponseEntity<Long> updatePost(@PathVariable Long postId, @RequestBody PostUpdateRequest request,
 		@Login String account) {
 		return ResponseEntity.status(OK).body(postService.updatePost(postId, request));
+	}
+
+	@DeleteMapping("/posts/{postId}")
+	public ResponseEntity<Long> deletePost(@PathVariable Long postId, @Login String account) {
+		postService.deletePost(postId);
+		return ResponseEntity.status(OK).body(postId);
 	}
 }
