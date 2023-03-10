@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.hyunzxn.zunboard.domain.Post;
 import com.hyunzxn.zunboard.domain.User;
+import com.hyunzxn.zunboard.exception.NotFoundException;
 import com.hyunzxn.zunboard.exception.UnAuthorizedException;
 import com.hyunzxn.zunboard.repository.PostRepository;
 import com.hyunzxn.zunboard.repository.UserRepository;
@@ -38,5 +39,12 @@ public class PostService {
 
 	public Page<PostResponse> getAllPosts(Pageable pageable) {
 		return postRepository.findAllByOrderByIdDesc(pageable).map(PostResponse::changeToDto);
+	}
+
+	public PostResponse getSinglePostById(Long postId) {
+		Post post = postRepository.findById(postId)
+			.orElseThrow(NotFoundException::new);
+
+		return PostResponse.changeToDto(post);
 	}
 }

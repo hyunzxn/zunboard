@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -37,6 +38,18 @@ public class PostController {
 			.message("글 전체 조회 성공")
 			.data(pages)
 			.build();
+		return ResponseEntity.status(OK).body(response);
+	}
+
+	@GetMapping("/posts/{postId}")
+	public ResponseEntity<ApiResponse<Object>> getSinglePostById(@PathVariable Long postId) {
+		PostResponse postResponse = postService.getSinglePostById(postId);
+		ApiResponse<Object> response = ApiResponse.builder()
+			.isSuccess("true")
+			.message("글 단건 조회 성공")
+			.data(postResponse)
+			.build();
+
 		return ResponseEntity.status(OK).body(response);
 	}
 }
