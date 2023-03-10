@@ -2,8 +2,8 @@ package com.hyunzxn.zunboard.controller;
 
 import static org.springframework.http.HttpStatus.*;
 
-import java.util.List;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -30,13 +30,13 @@ public class PostController {
 	}
 
 	@GetMapping("/posts")
-	public ResponseEntity<ApiResponse<Object>> getAllPosts() {
-		List<PostResponse> posts = postService.getAllPosts();
-		ApiResponse<Object> result = ApiResponse.builder()
+	public ResponseEntity<ApiResponse<Object>> getAllPosts(Pageable pageable) {
+		Page<PostResponse> pages = postService.getAllPosts(pageable);
+		ApiResponse<Object> response = ApiResponse.builder()
 			.isSuccess("true")
 			.message("글 전체 조회 성공")
-			.data(posts)
+			.data(pages)
 			.build();
-		return ResponseEntity.status(OK).body(result);
+		return ResponseEntity.status(OK).body(response);
 	}
 }
