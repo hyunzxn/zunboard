@@ -8,10 +8,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class PostUpdateRequest {
 
+	private String updatedTitle;
 	private String updatedContent;
 
 	@Builder
-	public PostUpdateRequest(String updatedContent) {
+	public PostUpdateRequest(String updatedTitle, String updatedContent) {
+		this.updatedTitle = updatedTitle;
 		this.updatedContent = updatedContent;
 	}
 }

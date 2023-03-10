@@ -8,10 +8,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class PostCreateRequest {
 
+	private String title;
 	private String content;
 
 	@Builder
-	public PostCreateRequest(String content) {
+	public PostCreateRequest(String title, String content) {
+		this.title = title;
 		this.content = content;
 	}
 }

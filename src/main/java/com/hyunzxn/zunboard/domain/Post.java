@@ -29,6 +29,8 @@ public class Post extends BaseEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	private String title;
+
 	@Lob
 	private String content;
 
@@ -37,12 +39,14 @@ public class Post extends BaseEntity {
 	private User user;
 
 	@Builder
-	public Post(String content) {
+	public Post(String title, String content) {
+		this.title = title;
 		this.content = content;
 	}
 
-	public static Post createPost(String content, User user) {
+	public static Post createPost(String title, String content, User user) {
 		Post post = Post.builder()
+			.title(title)
 			.content(content)
 			.build();
 		post.setUser(user);
@@ -55,6 +59,7 @@ public class Post extends BaseEntity {
 	}
 
 	public void update(PostUpdateRequest request) {
+		this.title = request.getUpdatedTitle();
 		this.content = request.getUpdatedContent();
 	}
 }

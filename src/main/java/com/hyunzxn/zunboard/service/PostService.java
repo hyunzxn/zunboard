@@ -33,7 +33,7 @@ public class PostService {
 		User user = userRepository.findByAccount(account)
 			.orElseThrow(UnAuthorizedException::new);
 
-		Post post = Post.createPost(request.getContent(), user);
+		Post post = Post.createPost(request.getTitle(),request.getContent(), user);
 
 		Post savedPost = postRepository.save(post);
 
