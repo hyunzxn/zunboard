@@ -11,15 +11,17 @@ import lombok.Getter;
 public class PostResponse {
 
 	private final Long postId;
+	private final String title;
 	private final String content;
 	private final LocalDateTime createdAt;
 	private final LocalDateTime lastModifiedAt;
 	private final String createdBy;
 
 	@Builder
-	public PostResponse(Long postId, String content, LocalDateTime createdAt, LocalDateTime lastModifiedAt,
+	public PostResponse(Long postId, String title, String content, LocalDateTime createdAt, LocalDateTime lastModifiedAt,
 		String createdBy) {
 		this.postId = postId;
+		this.title = title;
 		this.content = content;
 		this.createdAt = createdAt;
 		this.lastModifiedAt = lastModifiedAt;
@@ -29,6 +31,7 @@ public class PostResponse {
 	public static PostResponse changeToDto(Post post) {
 		return PostResponse.builder()
 			.postId(post.getId())
+			.title(post.getTitle())
 			.content(post.getContent())
 			.createdAt(post.getCreatedAt())
 			.lastModifiedAt(post.getModifiedAt())
