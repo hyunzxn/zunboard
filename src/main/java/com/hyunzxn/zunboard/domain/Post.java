@@ -13,6 +13,8 @@ import javax.persistence.ManyToOne;
 
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import com.hyunzxn.zunboard.request.PostUpdateRequest;
+
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -53,4 +55,7 @@ public class Post extends BaseEntity {
 		user.getPosts().add(this);
 	}
 
+	public void update(PostUpdateRequest request) {
+		this.content = request.getUpdatedContent();
+	}
 }

@@ -12,6 +12,7 @@ import com.hyunzxn.zunboard.exception.UnAuthorizedException;
 import com.hyunzxn.zunboard.repository.PostRepository;
 import com.hyunzxn.zunboard.repository.UserRepository;
 import com.hyunzxn.zunboard.request.PostCreateRequest;
+import com.hyunzxn.zunboard.request.PostUpdateRequest;
 import com.hyunzxn.zunboard.response.PostResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -46,5 +47,15 @@ public class PostService {
 			.orElseThrow(NotFoundException::new);
 
 		return PostResponse.changeToDto(post);
+	}
+
+	@Transactional
+	public Long updatePost(Long postId, PostUpdateRequest request) {
+
+		Post post = postRepository.findById(postId)
+			.orElseThrow(NotFoundException::new);
+
+		post.update(request);
+		return post.getId();
 	}
 }

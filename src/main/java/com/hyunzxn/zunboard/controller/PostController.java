@@ -8,11 +8,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.hyunzxn.zunboard.annotations.Login;
 import com.hyunzxn.zunboard.request.PostCreateRequest;
+import com.hyunzxn.zunboard.request.PostUpdateRequest;
 import com.hyunzxn.zunboard.response.ApiResponse;
 import com.hyunzxn.zunboard.response.PostResponse;
 import com.hyunzxn.zunboard.service.PostService;
@@ -51,5 +53,11 @@ public class PostController {
 			.build();
 
 		return ResponseEntity.status(OK).body(response);
+	}
+
+	@PutMapping("/posts/{postId}")
+	public ResponseEntity<Long> updatePost(@PathVariable Long postId, @RequestBody PostUpdateRequest request,
+		@Login String account) {
+		return ResponseEntity.status(OK).body(postService.updatePost(postId, request));
 	}
 }
