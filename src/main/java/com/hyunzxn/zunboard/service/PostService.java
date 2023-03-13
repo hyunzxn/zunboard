@@ -62,13 +62,13 @@ public class PostService {
 	}
 
 	@Transactional
-	public void deletePost(Long postId) {
+	public Long deletePost(Long postId) {
 
 		Optional<Post> findPost = postRepository.findById(postId);
 		if (findPost.isEmpty()) {
 			throw new NotFoundException();
 		}
 		postRepository.deleteById(postId);
-
+		return postId;
 	}
 }

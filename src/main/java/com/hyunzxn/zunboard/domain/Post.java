@@ -53,6 +53,10 @@ public class Post extends BaseEntity {
 		return post;
 	}
 
+	public void setIdForTest(Long id) {
+		this.id = id;
+	} //TODO 이 부분이 마음에 좀 걸린다. 이렇게 하는게 맞나?
+
 	public void setUser(User user) {
 		this.user = user;
 		user.getPosts().add(this);
