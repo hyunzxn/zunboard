@@ -8,6 +8,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -44,6 +46,9 @@ class PostControllerTest {
 
 	@Autowired
 	private UserRepository userRepository;
+
+	@Autowired
+	private EntityManager em;
 
 	@Autowired
 	private AuthService authService;
@@ -147,11 +152,28 @@ class PostControllerTest {
 
 	@Test
 	@DisplayName("글 단건 조회에 성공한다.")
-	@Transactional
-	//TODO 왜 트랜잭션을 걸어주면 페치조인을 안 먹고 따로 가지고 오는거지?
 	void 글단건조회요청테스트() throws Exception {
 		//given
-		User user = userRepository.findByAccount("test-account").orElseThrow(UnAuthorizedException::new);
+		User user = User.builder()
+			.username("현준")
+			.account("hyunzxn")
+			.password("1234")
+			.build();
+		userRepository.save(user);
+
+		/**
+		 * 이렇게 하면 post select 쿼리가 한 번 나가고 insert 쿼리가 나감.
+		 */
+		// Post post = Post.builder()
+		// 	.title("제목입니다.")
+		// 	.content("내용입니다.")
+		// 	.build();
+		// post.setIdForTest(1L);
+		// post.setUser(user);
+
+		/**
+		 * 이렇게 하면 post select 쿼리가 안 나가고 바로 insert 쿼리가 나감.
+		 */
 		Post post = Post.createPost("제목입니다.", "내용입니다.", user);
 		postRepository.save(post);
 
@@ -164,8 +186,28 @@ class PostControllerTest {
 	}
 
 	@Test
+	@DisplayName("글 단건 조회에 성공한다.(@Transactional 사용)")
+	@Transactional
+	void 글단건조회요청테스트_트랜잭션() throws Exception {
+		//given
+		User user = userRepository.findByAccount("test-account").orElseThrow(UnAuthorizedException::new);
+		Post post = Post.createPost("제목입니다.", "내용입니다.", user);
+
+		postRepository.save(post);
+
+		em.flush();
+		em.clear();
+
+		//expected
+		mockMvc.perform(get("/posts/{id}", post.getId())
+				.contentType(MediaType.APPLICATION_JSON)
+			)
+			.andExpect(status().isOk())
+			.andDo(print());
+	}
+
+	@Test
 	@DisplayName("글이 수정된다.")
-	//TODO @Transactional을 걸어놓으면 fetch join이 먹힌다! 왜?
 	void 글수정요청테스트() throws Exception {
 		//given
 		Post post = Post.builder()
