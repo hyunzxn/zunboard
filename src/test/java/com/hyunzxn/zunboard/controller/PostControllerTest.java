@@ -80,6 +80,7 @@ class PostControllerTest {
 	@AfterEach
 	void clean() {
 		postRepository.deleteAll();
+
 		userRepository.deleteAll();
 	}
 
@@ -163,6 +164,7 @@ class PostControllerTest {
 
 		/**
 		 * 이렇게 하면 post select 쿼리가 한 번 나가고 insert 쿼리가 나감.
+		 * 이렇게 임의로 Post 객체를 만들면...JPA가 관리를 하지 않는 준영속 엔티티가 만들어진다.
 		 */
 		// Post post = Post.builder()
 		// 	.title("제목입니다.")
