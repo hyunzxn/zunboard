@@ -130,7 +130,7 @@ class PostControllerTest {
 		userRepository.save(user);
 
 		List<Post> posts = new ArrayList<>();
-		for (int i=1; i<11; i++) {
+		for (int i = 1; i < 11; i++) {
 			Post post = Post.createPost("제목 " + i, "내용" + i, user);
 			posts.add(post);
 		}
@@ -138,8 +138,8 @@ class PostControllerTest {
 
 		//expected
 		mockMvc.perform(get("/posts?page=0&size=5")
-			.contentType(MediaType.APPLICATION_JSON)
-		)
+				.contentType(MediaType.APPLICATION_JSON)
+			)
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.data.content.length()").value(5))
 			.andExpect(jsonPath("$.data.content[0].postId").value(posts.get(9).getId()))
@@ -164,8 +164,8 @@ class PostControllerTest {
 
 		//expected
 		mockMvc.perform(get("/posts/{id}", post.getId())
-			.contentType(MediaType.APPLICATION_JSON)
-		)
+				.contentType(MediaType.APPLICATION_JSON)
+			)
 			.andExpect(status().isOk())
 			.andDo(print());
 	}
@@ -189,6 +189,25 @@ class PostControllerTest {
 		mockMvc.perform(put("/posts/{id}", post.getId())
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(request))
+				.header(AUTHORIZATION, jwt)
+			)
+			.andExpect(status().isOk())
+			.andDo(print());
+	}
+
+	@Test
+	@DisplayName("글이 삭제된다.")
+	void 글삭제요청테스트() throws Exception {
+		//given
+		Post post = Post.builder()
+			.title("제목입니다.")
+			.content("내용입니다.")
+			.build();
+		postRepository.save(post);
+
+		//expected
+		mockMvc.perform(delete("/posts/{id}", post.getId())
+				.contentType(MediaType.APPLICATION_JSON)
 				.header(AUTHORIZATION, jwt)
 			)
 			.andExpect(status().isOk())
