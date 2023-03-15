@@ -8,8 +8,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.EntityManager;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -19,12 +17,10 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hyunzxn.zunboard.domain.Post;
 import com.hyunzxn.zunboard.domain.User;
-import com.hyunzxn.zunboard.exception.UnAuthorizedException;
 import com.hyunzxn.zunboard.repository.PostRepository;
 import com.hyunzxn.zunboard.repository.UserRepository;
 import com.hyunzxn.zunboard.request.LoginRequest;
@@ -34,8 +30,11 @@ import com.hyunzxn.zunboard.request.SignupRequest;
 import com.hyunzxn.zunboard.response.LoginResponse;
 import com.hyunzxn.zunboard.service.AuthService;
 
+import lombok.extern.slf4j.Slf4j;
+
 @AutoConfigureMockMvc
 @SpringBootTest
+@Slf4j
 class PostControllerTest {
 
 	@Autowired
@@ -46,9 +45,6 @@ class PostControllerTest {
 
 	@Autowired
 	private UserRepository userRepository;
-
-	@Autowired
-	private EntityManager em;
 
 	@Autowired
 	private AuthService authService;
@@ -67,12 +63,14 @@ class PostControllerTest {
 			.password("1234")
 			.build();
 		authService.signup(signupRequest);
+		log.info("========회원가입완료=========");
 
 		LoginRequest loginRequest = LoginRequest.builder()
 			.account("test-account")
 			.password("1234")
 			.build();
 		LoginResponse loginResponse = authService.login(loginRequest);
+		log.info("========로그인 완료=========");
 		jwt = loginResponse.getToken();
 
 	}
@@ -80,7 +78,6 @@ class PostControllerTest {
 	@AfterEach
 	void clean() {
 		postRepository.deleteAll();
-
 		userRepository.deleteAll();
 	}
 
@@ -162,20 +159,6 @@ class PostControllerTest {
 			.build();
 		userRepository.save(user);
 
-		/**
-		 * 이렇게 하면 post select 쿼리가 한 번 나가고 insert 쿼리가 나감.
-		 * 이렇게 임의로 Post 객체를 만들면...JPA가 관리를 하지 않는 준영속 엔티티가 만들어진다.
-		 */
-		// Post post = Post.builder()
-		// 	.title("제목입니다.")
-		// 	.content("내용입니다.")
-		// 	.build();
-		// post.setIdForTest(1L);
-		// post.setUser(user);
-
-		/**
-		 * 이렇게 하면 post select 쿼리가 안 나가고 바로 insert 쿼리가 나감.
-		 */
 		Post post = Post.createPost("제목입니다.", "내용입니다.", user);
 		postRepository.save(post);
 
@@ -183,27 +166,6 @@ class PostControllerTest {
 		mockMvc.perform(get("/posts/{id}", post.getId())
 			.contentType(MediaType.APPLICATION_JSON)
 		)
-			.andExpect(status().isOk())
-			.andDo(print());
-	}
-
-	@Test
-	@DisplayName("글 단건 조회에 성공한다.(@Transactional 사용)")
-	@Transactional
-	void 글단건조회요청테스트_트랜잭션() throws Exception {
-		//given
-		User user = userRepository.findByAccount("test-account").orElseThrow(UnAuthorizedException::new);
-		Post post = Post.createPost("제목입니다.", "내용입니다.", user);
-
-		postRepository.save(post);
-
-		em.flush();
-		em.clear();
-
-		//expected
-		mockMvc.perform(get("/posts/{id}", post.getId())
-				.contentType(MediaType.APPLICATION_JSON)
-			)
 			.andExpect(status().isOk())
 			.andDo(print());
 	}
